@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NabungNikah — Fauzi & Sari</title>
+    <link rel="icon" href="assets/img/ring.png" type="image/x-icon" />
+    <!-- Font & Tailwind -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- File konfigurasi Firebase -->
+    <script type="module" src="./assets/js/firebase.js"></script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/style.css" />
+  </head>
+  <body class="bg-blue-50 font-poppins text-slate-800">
+    <div class="min-h-screen max-w-4xl mx-auto px-4 py-6">
+      <!-- Header -->
+      <header
+        class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6"
+      >
+        <div>
+          <h1 class="text-3xl font-semibold text-blue-700">NabungNikah</h1>
+          <p class="text-sm text-slate-500">Ahmad Fauzi & Novyta Sari 💍</p>
+        </div>
+        <nav class="mt-4 sm:mt-0 flex gap-2 items-center">
+          <button class="tab-btn px-4 py-2 rounded-lg" data-route="tabungan">
+            💰 Tabungan
+          </button>
+          <button class="tab-btn px-4 py-2 rounded-lg" data-route="rencana">
+            📋 Rencana Pernikahan
+          </button>
+        </nav>
+      </header>
+
+      <!-- Konten -->
+      <main
+        id="app"
+        class="bg-white rounded-2xl p-6 shadow-md min-h-[480px] transition-all"
+      ></main>
+      <!-- Panduan Penggunaan -->
+      <section
+        class="mt-10 bg-white rounded-2xl shadow-sm border border-blue-100 p-6 space-y-4"
+      >
+        <h2 class="text-xl font-semibold text-blue-700 text-center">
+          🌸 Panduan Penggunaan NabungNikah
+        </h2>
+        <div class="space-y-4 text-slate-700">
+          <div>
+            <h3 class="font-semibold text-blue-600">💰 Tabungan</h3>
+            <ul class="list-disc ml-5 text-sm mt-1 space-y-1">
+              <li>Masukkan <b>target tabungan</b> yang ingin dicapai.</li>
+              <li>
+                Tambahkan nominal yang sudah ditabung dengan tombol
+                <em>“+ Simpan”</em>.
+              </li>
+              <li>
+                Progress akan muncul otomatis dalam bentuk lingkaran dan
+                persentase.
+              </li>
+              <li>
+                Gunakan tombol <b>Export</b> untuk menyimpan data, atau
+                <b>Import</b> untuk memuat kembali.
+              </li>
+              <li>
+                Semua data tersimpan di browser kamu, jadi aman walau ditutup.
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="font-semibold text-blue-600">📋 Rencana Pernikahan</h3>
+            <ul class="list-disc ml-5 text-sm mt-1 space-y-1">
+              <li>
+                Tambahkan item seperti <em>Venue</em>, <em>Dekorasi</em>,
+                <em>MUA</em>, atau keperluan lainnya.
+              </li>
+              <li>
+                Setiap item bisa diberi estimasi biaya dan status pembayaran.
+              </li>
+              <li>
+                Bagian <b>Alokasi Tabungan</b> akan menampilkan semua item yang
+                sudah dibuat.
+              </li>
+              <li>Jika belum ada data, akan muncul pesan “Belum ada item”.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script src="assets/js/script.js"></script>
+  </body>
+</html>

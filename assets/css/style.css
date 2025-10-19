@@ -1,0 +1,42 @@
+:root {
+  --blue-soft: #bfdbfe; /* pastel biru muda */
+  --blue-main: #3b82f6;
+  --blue-dark: #1e3a8a;
+  --cream-bg: #f9fafb;
+}
+
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap");
+
+body {
+  background-color: var(--cream-bg);
+  font-family: "Poppins", sans-serif;
+}
+.card {
+  @apply bg-white/90 backdrop-blur-sm rounded-2xl border border-blue-100 shadow-md p-6;
+}
+
+.tab-btn {
+  background-color: white;
+  border: 1px solid var(--blue-soft);
+  color: var(--blue-dark);
+  transition: all 0.3s ease;
+}
+.tab-btn:hover {
+  background-color: var(--blue-soft);
+}
+.tab-btn.active {
+  background-color: var(--blue-main);
+  color: white;
+}
+
+.circle {
+  stroke-linecap: round;
+  transition: stroke-dasharray 600ms ease;
+}
+
+/* responsive tweaks */
+@media (max-width: 640px) {
+  .min-h-480 {
+    min-height: 420px;
+  }
+}
