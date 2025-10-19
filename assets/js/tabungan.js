@@ -6,7 +6,6 @@ import {
   deleteDoc,
   doc,
   setDoc,
-  getDoc,
   onSnapshot,
   query,
 } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
@@ -33,31 +32,29 @@ export function initTabungan() {
 
   const tabunganRef = collection(db, "tabungan");
   const targetDocRef = doc(db, "tabungan", "target");
-
   let targetValue = 0;
 
-  // 🔁 Load target dari Firebase
-  async function loadTarget() {
-    const docSnap = await getDoc(targetDocRef);
+  // 🔁 Real-time listener target
+  onSnapshot(targetDocRef, (docSnap) => {
     if (docSnap.exists()) {
       targetValue = docSnap.data().value || 0;
       targetInput.value = targetValue;
       updateUI();
     }
-  }
+  });
 
-  loadTarget();
-
-  // 🔁 Load transaksi real-time
+  // 🔁 Load data transaksi real-time
   onSnapshot(query(tabunganRef), (snapshot) => {
     const transactions = [];
     snapshot.forEach((doc) => {
-      if (doc.id !== "target") transactions.push({ id: doc.id, ...doc.data() });
+      // skip document target
+      if (doc.id === "target") return;
+      transactions.push({ id: doc.id, ...doc.data() });
     });
     renderTransactions(transactions);
   });
 
-  // ✨ Modal tambah transaksi
+  // Buka modal tambah
   addSaveBtn.addEventListener("click", () => {
     modalName.value = "";
     modalAmount.value = "";
@@ -67,6 +64,7 @@ export function initTabungan() {
 
   cancelModal.addEventListener("click", () => addModal.classList.add("hidden"));
 
+  // Simpan transaksi dari modal
   saveModalBtn.addEventListener("click", async () => {
     const name = modalName.value.trim();
     const amount = Number(modalAmount.value);
@@ -84,19 +82,17 @@ export function initTabungan() {
     addModal.classList.add("hidden");
   });
 
-  // 💾 Reset semua transaksi + target
+  // Reset semua transaksi (kecuali target)
   resetBtn.addEventListener("click", async () => {
     if (!confirm("Yakin mau reset semua data tabungan?")) return;
     const snapshot = await getDocs(tabunganRef);
     for (const d of snapshot.docs) {
+      if (d.id === "target") continue;
       await deleteDoc(doc(db, "tabungan", d.id));
     }
-    // Reset target juga
-    targetValue = 0;
-    targetInput.value = "";
   });
 
-  // 🎯 Update target ke Firebase
+  // Update target ke Firebase
   targetInput.addEventListener("input", async () => {
     targetValue = Number(targetInput.value) || 0;
     await setDoc(targetDocRef, { value: targetValue });
@@ -110,7 +106,6 @@ export function initTabungan() {
 
     transactions.forEach((t) => {
       total += t.amount;
-
       const li = document.createElement("li");
       li.className =
         "flex justify-between items-center bg-white p-2 rounded shadow-sm";
@@ -127,13 +122,10 @@ export function initTabungan() {
             t.date
           ).toLocaleDateString("id-ID")}</div>
         </div>
-        <button data-id="${
-          t.id
-        }" class="text-red-500 text-sm hover:text-red-700">
+        <button data-id="${t.id}" class="text-red-500 text-sm hover:text-red-700">
           Hapus
         </button>
       `;
-
       li.querySelector("button").addEventListener("click", async () => {
         if (!confirm("Hapus transaksi ini?")) return;
         await deleteDoc(doc(db, "tabungan", t.id));
@@ -145,7 +137,7 @@ export function initTabungan() {
     updateUI(total);
   }
 
-  // Update progress & sisa target
+  // Update progress dan sisa target
   function updateUI(total = 0) {
     savedTotalEl.textContent = `Rp ${total.toLocaleString("id-ID")}`;
     const remaining = Math.max(targetValue - total, 0);
