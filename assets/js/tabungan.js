@@ -120,7 +120,9 @@ export function initTabungan() {
             t.date
           ).toLocaleDateString("id-ID")}</div>
         </div>
-        <button data-id="${t.id}" class="text-red-500 text-sm hover:text-red-700">Hapus</button>
+        <button data-id="${
+          t.id
+        }" class="text-red-500 text-sm hover:text-red-700">Hapus</button>
       `;
 
       // Event hapus
