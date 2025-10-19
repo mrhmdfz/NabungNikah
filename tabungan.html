@@ -1,30 +1,39 @@
 <section id="page-tabungan" class="space-y-5">
   <h2 class="text-xl font-semibold text-blue-700">Progress Tabungan</h2>
 
-  <div class="flex flex-col md:flex-row md:items-end md:gap-4">
-    <!-- Target Tabungan -->
-    <div class="flex-1">
+  <!-- Target Tabungan -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+    <div class="md:col-span-2">
       <label class="text-sm text-slate-600">🎯 Target Tabungan (Rp)</label>
-      <input
-        id="targetInput"
-        type="number"
-        class="mt-1 w-full p-2 rounded-md border focus:ring focus:ring-blue-200"
-        placeholder="Contoh: 20000000"
-      />
+      <div class="flex gap-2 mt-1">
+        <input
+          id="targetInput"
+          type="number"
+          class="w-full p-2 rounded-md border focus:ring focus:ring-blue-200"
+          placeholder="Contoh: 5000000"
+        />
+        <button
+          id="saveTargetBtn"
+          class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 flex-shrink-0"
+        >
+          Simpan Target
+        </button>
+      </div>
     </div>
 
-    <!-- Input & Tombol Tambah -->
-    <div class="flex gap-2 mt-2 md:mt-0">
+    <!-- Tombol Tambah Tabungan -->
+    <div class="flex w-full gap-2">
       <button
         id="addSaveBtn"
-        class="px-4 py-2 rounded-md bg-blue-500 text-white hover:bg-blue-600"
+        class="px-4 py-2 rounded-md bg-blue-500 text-white hover:bg-blue-600 w-full"
       >
-        Tambah
+        Tambah Tabungan
       </button>
     </div>
   </div>
 
-  <div class="md:flex md:items-center md:gap-6 mt-4">
+  <!-- Progress Tabungan -->
+  <div class="md:flex md:items-center md:gap-6">
     <div class="flex-1">
       <p class="text-sm text-slate-500">Terkumpul</p>
       <div id="savedTotal" class="text-3xl font-semibold text-blue-700">
@@ -34,9 +43,7 @@
         Sisa: <span id="remaining">Rp 0</span>
       </p>
     </div>
-    <div
-      class="relative w-40 h-40 flex items-center justify-center mt-4 md:mt-0"
-    >
+    <div class="relative w-40 h-40 flex items-center justify-center">
       <svg id="progressCircle" viewBox="0 0 36 36" class="w-full h-full">
         <path
           class="circle-bg"
@@ -72,11 +79,12 @@
     </div>
   </div>
 
+  <!-- Daftar Transaksi -->
   <div>
     <h3 class="font-medium text-blue-700">Transaksi Tabungan</h3>
     <ul
       id="txnList"
-      class="mt-2 space-y-2 max-h-60 overflow-auto bg-blue-50 p-2 rounded-md"
+      class="mt-2 space-y-2 max-h-40 overflow-auto bg-blue-50 p-2 rounded-md"
     ></ul>
   </div>
 
@@ -85,7 +93,7 @@
       id="resetBtn"
       class="py-2 px-4 rounded-md bg-red-100 text-red-700 hover:bg-red-200"
     >
-      Reset
+      Reset Semua
     </button>
   </div>
 </section>
@@ -93,9 +101,9 @@
 <!-- Modal Tambah Tabungan -->
 <div
   id="addModal"
-  class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 hidden z-50"
+  class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center z-50"
 >
-  <div class="bg-white rounded-xl shadow-lg w-full max-w-md p-6 relative">
+  <div class="bg-white rounded-xl shadow-lg w-full max-w-md p-6 relative mx-4">
     <h3 class="text-lg font-semibold text-blue-700 mb-4">Tambah Tabungan</h3>
     <div class="space-y-3">
       <div>
@@ -117,9 +125,7 @@
         />
       </div>
       <div>
-        <label class="block text-sm text-slate-600 mb-1"
-          >Alasan / Catatan</label
-        >
+        <label class="block text-sm text-slate-600 mb-1">Alasan / Catatan</label>
         <input
           id="modalNote"
           type="text"
