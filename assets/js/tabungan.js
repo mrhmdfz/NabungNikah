@@ -5,15 +5,17 @@ import {
   getDocs,
   deleteDoc,
   doc,
-  setDoc,
   onSnapshot,
   query,
+  setDoc,
+  doc as docRef,
 } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 import { db } from "../js/firebase.js";
 
 export function initTabungan() {
   // Elemen DOM
   const targetInput = document.getElementById("targetInput");
+  const saveTargetBtn = document.getElementById("saveTargetBtn");
   const addSaveBtn = document.getElementById("addSaveBtn");
   const resetBtn = document.getElementById("resetBtn");
   const txnList = document.getElementById("txnList");
@@ -31,30 +33,27 @@ export function initTabungan() {
   const saveModalBtn = document.getElementById("saveModalBtn");
 
   const tabunganRef = collection(db, "tabungan");
-  const targetDocRef = doc(db, "tabungan", "target");
+  const targetDocRef = doc(db, "tabungan_meta", "target");
+
   let targetValue = 0;
 
-  // 🔁 Real-time listener target
-  onSnapshot(targetDocRef, (docSnap) => {
-    if (docSnap.exists()) {
-      targetValue = docSnap.data().value || 0;
+  // 🔁 Load target real-time
+  onSnapshot(targetDocRef, (snap) => {
+    if (snap.exists()) {
+      targetValue = snap.data().value;
       targetInput.value = targetValue;
       updateUI();
     }
   });
 
-  // 🔁 Load data transaksi real-time
+  // 🔁 Load transaksi real-time
   onSnapshot(query(tabunganRef), (snapshot) => {
     const transactions = [];
-    snapshot.forEach((doc) => {
-      // skip document target
-      if (doc.id === "target") return;
-      transactions.push({ id: doc.id, ...doc.data() });
-    });
+    snapshot.forEach((doc) => transactions.push({ id: doc.id, ...doc.data() }));
     renderTransactions(transactions);
   });
 
-  // Buka modal tambah
+  // ➕ Buka modal tambah transaksi
   addSaveBtn.addEventListener("click", () => {
     modalName.value = "";
     modalAmount.value = "";
@@ -64,12 +63,11 @@ export function initTabungan() {
 
   cancelModal.addEventListener("click", () => addModal.classList.add("hidden"));
 
-  // Simpan transaksi dari modal
+  // 💾 Simpan transaksi dari modal
   saveModalBtn.addEventListener("click", async () => {
     const name = modalName.value.trim();
     const amount = Number(modalAmount.value);
     const note = modalNote.value.trim();
-
     if (!name || !amount || amount <= 0) return alert("Data tidak valid!");
 
     await addDoc(tabunganRef, {
@@ -82,24 +80,24 @@ export function initTabungan() {
     addModal.classList.add("hidden");
   });
 
-  // Reset semua transaksi (kecuali target)
+  // 🔄 Simpan target ke Firebase
+  saveTargetBtn.addEventListener("click", async () => {
+    const newTarget = Number(targetInput.value);
+    if (!newTarget || newTarget <= 0) return alert("Isi target yang valid!");
+    await setDoc(targetDocRef, { value: newTarget });
+    alert("Target berhasil disimpan!");
+  });
+
+  // 🧹 Reset semua transaksi
   resetBtn.addEventListener("click", async () => {
     if (!confirm("Yakin mau reset semua data tabungan?")) return;
     const snapshot = await getDocs(tabunganRef);
     for (const d of snapshot.docs) {
-      if (d.id === "target") continue;
       await deleteDoc(doc(db, "tabungan", d.id));
     }
   });
 
-  // Update target ke Firebase
-  targetInput.addEventListener("input", async () => {
-    targetValue = Number(targetInput.value) || 0;
-    await setDoc(targetDocRef, { value: targetValue });
-    updateUI();
-  });
-
-  // Render transaksi
+  // 🧮 Render transaksi
   function renderTransactions(transactions) {
     txnList.innerHTML = "";
     let total = 0;
@@ -122,10 +120,10 @@ export function initTabungan() {
             t.date
           ).toLocaleDateString("id-ID")}</div>
         </div>
-        <button data-id="${t.id}" class="text-red-500 text-sm hover:text-red-700">
-          Hapus
-        </button>
+        <button data-id="${t.id}" class="text-red-500 text-sm hover:text-red-700">Hapus</button>
       `;
+
+      // Event hapus
       li.querySelector("button").addEventListener("click", async () => {
         if (!confirm("Hapus transaksi ini?")) return;
         await deleteDoc(doc(db, "tabungan", t.id));
@@ -137,7 +135,7 @@ export function initTabungan() {
     updateUI(total);
   }
 
-  // Update progress dan sisa target
+  // 🔢 Update progress dan sisa target
   function updateUI(total = 0) {
     savedTotalEl.textContent = `Rp ${total.toLocaleString("id-ID")}`;
     const remaining = Math.max(targetValue - total, 0);
